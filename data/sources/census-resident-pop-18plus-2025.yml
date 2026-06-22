@@ -31,3 +31,23 @@ description_tags:
 - Population Data
 - PreK-12 Education
 - Transportation
+variable_names:
+- table with row headers in column A and column headers in rows 3 through 5. (leading
+  dots indicate sub-parts)
+variable_report:
+- name: table with row headers in column A and column headers in rows 3 through 5.
+    (leading dots indicate sub-parts)
+  type: string
+  total_rows: 67
+  non_empty_count: 65
+  missing_count: 2
+  missing_pct: 2.99
+  unique_count: 65
+  sample_values:
+  - "Estimates of the Total Resident Population and Resident Population Age 18 Years\
+    \ and Older \nfor the United States, Regions, States, District of Columbia, and\
+    \ Puerto Rico: July 1, 2025"
+  - Geographic Area
+  - United States
+  - Northeast
+  - Midwest

@@ -45,3 +45,22 @@ description_tags:
 - Population Data
 - PreK-12 Education
 - Transportation
+variable_names:
+- table with row headers in column A and column headers in rows 3 through 4. (leading
+  dots indicate sub-parts)
+variable_report:
+- name: table with row headers in column A and column headers in rows 3 through 4.
+    (leading dots indicate sub-parts)
+  type: string
+  total_rows: 45
+  non_empty_count: 40
+  missing_count: 5
+  missing_pct: 11.11
+  unique_count: 39
+  sample_values:
+  - 'Annual Estimates of the Resident Population for Selected Age Groups by Sex for
+    the United States: April 1, 2020 to July 1, 2024'
+  - Age
+  - Total
+  - .Under 5 years
+  - .5 to 9 years
