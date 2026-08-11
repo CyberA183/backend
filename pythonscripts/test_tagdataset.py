@@ -63,3 +63,47 @@ def test_tagger_has_no_network_dependency():
     assert "import requests" not in source
     assert "fetch_url_text" not in source
     assert "extract_urls" not in source
+
+
+def test_wildlife_category_matches_ebird_text():
+    blob = tagdataset.build_text_blob({
+        "title": "eBird Observation Dataset",
+        "provider": {"name": "Cornell Lab of Ornithology"},
+    })
+    tags = tagdataset.infer_tags(blob)
+    assert "Wildlife & Nature" in tags
+
+
+def test_crime_data_does_not_get_energy_and_environment_tag():
+    blob = tagdataset.build_text_blob({
+        "title": "National FBI Crime Data Explorer",
+        "provider": {
+            "name": "Federal Bureau of Investigation",
+            "agency": "U.S. Department of Justice",
+        },
+    })
+    tags = tagdataset.infer_tags(blob)
+    assert "Energy & Environment" not in tags
+    assert "Law & Public Safety" in tags
+
+
+def test_agriculture_does_not_false_positive_on_oatmeal():
+    blob = tagdataset.build_text_blob({"title": "Oatmeal Recall Notices"})
+    tags = tagdataset.infer_tags(blob)
+    assert "Agriculture" not in tags
+
+
+def test_no_duplicate_keywords_within_any_category():
+    for tag, keywords in tagdataset.TAG_RULES.items():
+        assert len(keywords) == len(set(keywords)), f"duplicate keyword in {tag}"
+
+
+def test_generic_keywords_were_removed():
+    removed = {
+        "energy", "environment", "green", "efficien", "plant", "security",
+        "compliance", "industry", "enterprise", "funds", "structure", "doe",
+        "meal", "insect", "organic", "art", "arts", "poll",
+    }
+    for keywords in tagdataset.TAG_RULES.values():
+        for keyword in keywords:
+            assert keyword.strip() not in removed
