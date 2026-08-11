@@ -159,8 +159,12 @@ def build_text_blob(data: dict[str, Any], timeout: int, max_url_text: int) -> st
     return "\n".join(parts).lower()
 
 
-def infer_tags(text: str) -> dict[str, bool]:
-    return {tag: any(word in text for word in keywords) for tag, keywords in TAG_RULES.items()}
+def infer_tags(text: str) -> list[str]:
+    matched: list[str] = []
+    for tag, keywords in TAG_RULES.items():
+        if any(re.search(r"\b" + re.escape(keyword), text) for keyword in keywords):
+            matched.append(tag)
+    return sorted(matched)
 
 
 def process_file(path: Path, timeout: int, max_url_text: int, dry_run: bool) -> None:
@@ -176,8 +180,7 @@ def process_file(path: Path, timeout: int, max_url_text: int, dry_run: bool) -> 
     text_blob = build_text_blob(data, timeout=timeout, max_url_text=max_url_text)
     tags = infer_tags(text_blob)
 
-    matched = [tag for tag, val in tags.items() if val]
-    print(f"  - Tags matched: {matched}")
+    print(f"  - Tags matched: {tags}")
 
     if dry_run:
         return
