@@ -4,8 +4,8 @@ Simple dataset tagger.
 
 What it does:
 - Reads one or more YAML files from backend/data/sources
-- Uses the requests library to fetch text content from any URLs found in the YAML
-- Collects text from YAML fields + URL page content
+- Builds a text blob from each dataset's title, description, download description,
+  and provider fields
 - Generates simple keyword-based description tags
 - Writes tags back to each file as: description_tags: [..]
 
@@ -21,7 +21,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-import requests
 import yaml
 
 
@@ -105,44 +104,17 @@ def find_yaml_files(sources_dir: Path, one_file: str | None) -> list[Path]:
     return sorted(sources_dir.glob("*.yml"))
 
 
-def extract_urls(node: Any) -> list[str]:
-    """Recursively find URL-like values in a YAML object."""
-    urls: list[str] = []
-    if isinstance(node, dict):
-        for key, value in node.items():
-            if isinstance(value, str) and ("url" in str(key).lower() or "link" in str(key).lower()):
-                if value.startswith("http://") or value.startswith("https://"):
-                    urls.append(value)
-            urls.extend(extract_urls(value))
-    elif isinstance(node, list):
-        for item in node:
-            urls.extend(extract_urls(item))
-    return sorted(set(urls))
-
-
-def html_to_text(html: str) -> str:
-    text = re.sub(r"<script.*?</script>", " ", html, flags=re.IGNORECASE | re.DOTALL)
-    text = re.sub(r"<style.*?</style>", " ", text, flags=re.IGNORECASE | re.DOTALL)
-    text = re.sub(r"<[^>]+>", " ", text)
-    text = re.sub(r"\s+", " ", text).strip()
-    return text
-
-
-def fetch_url_text(url: str, timeout: int, max_chars: int) -> str:
-    try:
-        response = requests.get(url, timeout=timeout)
-        response.raise_for_status()
-        return html_to_text(response.text)[:max_chars]
-    except Exception as exc:
-        print(f"  - Could not fetch {url}: {exc}")
-        return ""
-
-
-def build_text_blob(data: dict[str, Any], timeout: int, max_url_text: int) -> str:
+def build_text_blob(data: dict[str, Any]) -> str:
     parts: list[str] = []
 
     for key in ["title", "short_title", "description"]:
         value = data.get(key)
+        if isinstance(value, str):
+            parts.append(value)
+
+    download = data.get("download", {})
+    if isinstance(download, dict):
+        value = download.get("description")
         if isinstance(value, str):
             parts.append(value)
 
@@ -152,9 +124,6 @@ def build_text_blob(data: dict[str, Any], timeout: int, max_url_text: int) -> st
             value = provider.get(key)
             if isinstance(value, str):
                 parts.append(value)
-
-    for url in extract_urls(data):
-        parts.append(fetch_url_text(url, timeout=timeout, max_chars=max_url_text))
 
     return "\n".join(parts).lower()
 
@@ -167,7 +136,7 @@ def infer_tags(text: str) -> list[str]:
     return sorted(matched)
 
 
-def process_file(path: Path, timeout: int, max_url_text: int, dry_run: bool) -> None:
+def process_file(path: Path, dry_run: bool) -> None:
     print(f"\nProcessing: {path}")
 
     with path.open("r", encoding="utf-8") as file:
@@ -177,7 +146,7 @@ def process_file(path: Path, timeout: int, max_url_text: int, dry_run: bool) -> 
         print("  - Skipped (YAML root is not an object)")
         return
 
-    text_blob = build_text_blob(data, timeout=timeout, max_url_text=max_url_text)
+    text_blob = build_text_blob(data)
     tags = infer_tags(text_blob)
 
     print(f"  - Tags matched: {tags}")
@@ -216,7 +185,7 @@ def main() -> None:
         return
 
     for path in files:
-        process_file(path=path, timeout=10, max_url_text=4000, dry_run=False)
+        process_file(path=path, dry_run=False)
 
 
 if __name__ == "__main__":
