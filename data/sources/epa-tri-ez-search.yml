@@ -15,25 +15,8 @@ download:
   file_size: varies by selection
 sensitive: false
 description_tags:
-  Agriculture: false
-  Business & Finance: false
-  Children & Families: false
-  Economy: false
-  Election: false
-  PreK-12 Education: false
-  Energy & Environment: true
-  Government Administration: true
-  Health & Social Services: false
-  Higher Education: false
-  Historic Preservation: false
-  Housing & Buildings: false
-  Labor & Workforce Development: false
-  Law & Public Safety: false
-  Parks & Recreation: false
-  Population Data: false
-  Public Utilities: false
-  Restaurant and Food Service: false
-  Transportation: false
+- Energy & Environment
+- Government Administration
 who: U.S. Environmental Protection Agency (EPA)
 how: Facility-level self-reported emissions data (regulatory program)
 where: Filterable to county, state, ZIP code level

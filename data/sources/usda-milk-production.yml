@@ -84,25 +84,8 @@ structure_complexity_tags:
   medium-dataset: false
   large-dataset: true
 description_tags:
-  Agriculture: true
-  Business & Finance: false
-  Children & Families: false
-  Economy: true
-  Election: false
-  PreK-12 Education: false
-  Energy & Environment: true
-  Government Administration: true
-  Health & Social Services: true
-  Higher Education: false
-  Historic Preservation: false
-  Housing & Buildings: true
-  Labor & Workforce Development: false
-  Law & Public Safety: false
-  Parks & Recreation: false
-  Population Data: true
-  Public Utilities: false
-  Restaurant and Food Service: true
-  Transportation: false
+- Agriculture
+- Business & Economy
 two_way_table_tags:
   two-way-table: false
 value_scale_tags:
