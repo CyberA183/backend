@@ -61,4 +61,3 @@ Full reference: [docs/API.md](docs/API.md).
 
 - [docs/PIPELINE.md](docs/PIPELINE.md) — the tagging/analysis pipeline, stage by stage
 - [docs/API.md](docs/API.md) — full HTTP API reference
-- [../ARCHITECTURE.md](../ARCHITECTURE.md) — how this backend relates to the `web/` site
