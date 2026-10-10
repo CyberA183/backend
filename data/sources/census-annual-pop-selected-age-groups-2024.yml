@@ -33,25 +33,8 @@ variables:
 - 2024 female
 sensitive: false
 description_tags:
-  Agriculture: false
-  Business & Finance: true
-  Children & Families: true
-  Economy: true
-  Election: true
-  PreK-12 Education: true
-  Energy & Environment: true
-  Government Administration: true
-  Health & Social Services: true
-  Higher Education: false
-  Historic Preservation: false
-  Housing & Buildings: true
-  Labor & Workforce Development: true
-  Law & Public Safety: false
-  Parks & Recreation: false
-  Population Data: true
-  Public Utilities: false
-  Restaurant and Food Service: false
-  Transportation: false
+- Business & Economy
+- Population Data
 who: U.S. Census Bureau (U.S. Department of Commerce)
 how: Statistical estimation from administrative records and surveys
 where: National

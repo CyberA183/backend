@@ -54,3 +54,10 @@ If `database/sources.db` is missing, the server falls back to reading `data/sour
 - `GET /api/health` — includes `dataSource`: `"sqlite"` or `"yaml"`
 - `GET /api/sources` — list all sources
 - `GET /api/sources/:id` — single source by id
+
+Full reference: [docs/API.md](docs/API.md).
+
+## Documentation
+
+- [docs/PIPELINE.md](docs/PIPELINE.md) — the tagging/analysis pipeline, stage by stage
+- [docs/API.md](docs/API.md) — full HTTP API reference
