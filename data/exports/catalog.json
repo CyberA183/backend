@@ -45,16 +45,7 @@
         "POPESTIMATE2025"
       ],
       "description_tags": [
-        "Business & Finance",
-        "Children & Families",
-        "Economy",
-        "Election",
-        "PreK-12 Education",
-        "Energy & Environment",
-        "Government Administration",
-        "Health & Social Services",
-        "Housing & Buildings",
-        "Labor & Workforce Development",
+        "Business & Economy",
         "Population Data"
       ],
       "analysis_tags": {
@@ -224,7 +215,7 @@
         "RNETMIG2021 through RNETMIG2025"
       ],
       "description_tags": [
-        "Energy & Environment",
+        "Business & Economy",
         "Population Data"
       ]
     },
@@ -284,10 +275,7 @@
         "RNETMIG2021 through RNETMIG2025"
       ],
       "description_tags": [
-        "Economy",
-        "Energy & Environment",
-        "Government Administration",
-        "Housing & Buildings",
+        "Business & Economy",
         "Population Data"
       ],
       "analysis_tags": {
@@ -444,10 +432,7 @@
         "NRANK_PPCHG2020 through NRANK_PPCHG2025"
       ],
       "description_tags": [
-        "Economy",
-        "Energy & Environment",
-        "Government Administration",
-        "Housing & Buildings",
+        "Business & Economy",
         "Population Data"
       ],
       "analysis_tags": {
@@ -590,13 +575,7 @@
       },
       "description_tags": [
         "Agriculture",
-        "Economy",
-        "Energy & Environment",
-        "Government Administration",
-        "Health & Social Services",
-        "Housing & Buildings",
-        "Population Data",
-        "Restaurant and Food Service"
+        "Business & Economy"
       ],
       "analysis_tags": {
         "anova_tags": {

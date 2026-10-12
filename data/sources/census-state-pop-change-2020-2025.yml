@@ -26,25 +26,8 @@ variables:
 - NRANK_PPCHG2020 through NRANK_PPCHG2025
 sensitive: false
 description_tags:
-  Agriculture: false
-  Business & Finance: false
-  Children & Families: false
-  Economy: true
-  Election: false
-  PreK-12 Education: false
-  Energy & Environment: true
-  Government Administration: true
-  Health & Social Services: false
-  Higher Education: false
-  Historic Preservation: false
-  Housing & Buildings: true
-  Labor & Workforce Development: false
-  Law & Public Safety: false
-  Parks & Recreation: false
-  Population Data: true
-  Public Utilities: false
-  Restaurant and Food Service: false
-  Transportation: false
+- Business & Economy
+- Population Data
 who: U.S. Census Bureau (U.S. Department of Commerce)
 how: null
 where: National
