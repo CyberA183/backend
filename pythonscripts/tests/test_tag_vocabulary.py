@@ -38,12 +38,28 @@ def test_sources_use_only_vocabulary_description_tags():
         assert not unknown, f"{name}: unknown description_tags {sorted(unknown)}"
 
 
+def check_statistical_tags(name, data, groups):
+    """Assert a source's statistical tag groups are all in the vocabulary."""
+    for key, value in data.items():
+        if not key.endswith("_tags") or key in ("description_tags", "manual_tags"):
+            continue
+        if not isinstance(value, dict):
+            continue
+        assert key in groups, f"{name}: tag group {key} missing from vocabulary"
+        unknown = set(value) - set(groups[key])
+        assert not unknown, f"{name}: {key} has unknown keys {sorted(unknown)}"
+
+
 def test_sources_use_only_vocabulary_statistical_tags():
     groups = tag_vocabulary.load_vocabulary()["statistical_tags"]
     for name, data in _sources():
-        for key, value in data.items():
-            if not key.endswith("_tags") or key == "description_tags":
-                continue
-            assert key in groups, f"{name}: tag group {key} missing from vocabulary"
-            unknown = set(value) - set(groups[key])
-            assert not unknown, f"{name}: {key} has unknown keys {sorted(unknown)}"
+        check_statistical_tags(name, data, groups)
+
+
+def test_manual_tags_list_is_not_a_statistical_group():
+    groups = {"anova_tags": ["good-for-one-way-anova"]}
+    data = {
+        "manual_tags": ["description_tags", "anova_tags"],
+        "anova_tags": {"good-for-one-way-anova": True},
+    }
+    check_statistical_tags("demo", data, groups)
