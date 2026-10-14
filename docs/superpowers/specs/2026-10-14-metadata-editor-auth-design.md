@@ -35,7 +35,7 @@ Success criteria:
   copies committed in `web/backend/data/sources/` (which still contain datasets upstream
   has deleted).
 - Topic tags (`description_tags`, a list) are written by `tagdataset.py` from the keys of
-  `TAG_RULES` (19 categories). Statistical tags are 17 `*_tags` groups, each a
+  `TAG_RULES` (19 categories). Statistical tags are 16 `*_tags` groups, each a
   `dict[str, bool]` with a fixed key set, written by 16 separate scripts orchestrated by
   `runall.py`.
 - Netlify Identity is loaded by Decap CMS, but is invite+password (no magic link) and is
@@ -51,7 +51,7 @@ unreachable).
 | Function | Method | Responsibility |
 |---|---|---|
 | `auth-request-link` | POST `{email}` | Allowlist check, rate limit, send magic link via Resend. Always responds 200 with the same body. |
-| `auth-verify` | GET `?token=` | Verify token, burn nonce, set session cookie, redirect to `/web/data-preview`. |
+| `auth-verify` | GET `?token=` / POST | GET: check token, render a confirm page (does not consume). POST: verify, burn nonce, set session cookie, redirect to `/web/data-preview`. |
 | `auth-me` | GET | `{email}` if signed in, else 401. |
 | `auth-logout` | POST | Clear the session cookie. |
 | `metadata-edit` | GET `?id=` | Current editable fields, tag vocabulary, and open metadata PRs for the dataset. |
@@ -93,7 +93,11 @@ responsibilities, each unit-testable without network:
    signs a link token `{email, exp: now+15min, nonce: 16 random bytes, purpose: "link"}`
    and emails `https://<site>/.netlify/functions/auth-verify?token=…` via Resend. The
    response is identical in every case so the allowlist cannot be probed.
-3. `auth-verify` verifies signature, `purpose`, and expiry; rejects if the nonce is already
+3. `auth-verify` GET only checks the token and renders a minimal confirm page with a
+   "Sign in" button that POSTs the token back. It never consumes the token, because email
+   security scanners (e.g. Outlook Safe Links) pre-fetch links and would otherwise burn
+   single-use links before the person clicks. On POST, `auth-verify` verifies signature,
+   `purpose`, and expiry; rejects if the nonce is already
    recorded in Blobs, otherwise records it (with TTL past expiry); re-checks the allowlist;
    sets `cdl_session` = signed `{email, exp: now+7d, purpose: "session"}` with
    `HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=604800`; redirects to the preview page.
@@ -178,9 +182,13 @@ editor UI but shown ("set by hand") next to the affected groups.
 1. `requireEditor`; validate `id` against `^[a-z0-9-]+$` and that the file exists.
 2. Validate `changes` (table above); reject empty or no-op changes.
 3. Fetch `data/sources/<id>.yml` and its blob `sha` from `main`.
-4. Parse with the `yaml` package's Document API, set only the changed paths, add tag fields
-   to `manual_tags` if needed, and serialize — preserving comments, key order, quoting, and
-   untouched blocks so the diff is minimal.
+4. Parse with the `yaml` package to read current values, then replace only the source text
+   of each changed top-level key (located via the parsed node ranges), adding tag fields to
+   `manual_tags` if needed; new keys are appended at the end. Every untouched byte is
+   preserved. (Re-serializing the whole document is not acceptable: it re-wraps long
+   strings and turns floats like `-181533.0` into ints.) Replacement blocks are emitted with
+   `indentSeq: false` (PyYAML list style) and `version: '1.1'` so strings such as `yes`,
+   `on`, or `2025` are quoted and read back by PyYAML as strings.
 5. Create branch `metadata/<id>-<UTC timestamp>` from `main`'s head, commit the file
    (message `Update metadata for <id>`, trailer `Co-Authored-By: <email>`), and open a PR
    titled `Update metadata: <title> (by <email>)`. The body lists each changed field with
