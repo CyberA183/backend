@@ -23,6 +23,8 @@ from typing import Any
 
 import yaml
 
+import manual_tags
+
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_SOURCES_DIR = SCRIPT_DIR.parent / "data" / "sources"
@@ -164,6 +166,10 @@ def process_file(path: Path, dry_run: bool) -> None:
 
     if not isinstance(data, dict):
         print("  - Skipped (YAML root is not an object)")
+        return
+
+    if manual_tags.is_manual(data, "description_tags"):
+        print("  - Skipped (description_tags set by hand; see manual_tags)")
         return
 
     text_blob = build_text_blob(data)
